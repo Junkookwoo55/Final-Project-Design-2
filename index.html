@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Selector</title>
+    <style>
+        body {
+            font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+        #backgroundGif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            max-width: 800px;
+        }
+        .button-1 {
+            background-color: #EA4C89;
+            border-radius: 8px;
+            border-style: none;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 20px 32px;
+            text-align: center;
+            transition: background-color 100ms, transform 100ms;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            margin: 10px;
+        }
+        .button-1:hover {
+            background-color: #F082AC;
+            transform: translate(0, -5px);
+        }
+        video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            z-index: 2;
+        }
+        .video-screen {
+            position: relative;
+            display: none;
+        }
+        .video-content {
+            position: relative;
+            z-index: 1;
+        }
+        .home-button {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #EA4C89;
+            border-radius: 8px;
+            border-style: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            text-align: center;
+            transition: background-color 100ms, transform 100ms;
+        }
+        .home-button:hover {
+            background-color: #F082AC;
+        }
+        .volume-slider-container, .download-button, .speed-buttons-container {
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .volume-slider {
+            width: 60%;
+            max-width: 300px;
+        }
+        .play-pause-buttons, .download-button, .speed-buttons-container, .fullscreen-pip-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .play-pause-button, .download-button, .speed-button, .fullscreen-button, .pip-button {
+            background-color: #EA4C89;
+            border-radius: 8px;
+            border-style: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            text-align: center;
+            transition: background-color 100ms, transform 100ms;
+            margin: 10px;
+        }
+        .play-pause-button:hover, .download-button:hover, .speed-button:hover, .fullscreen-button:hover, .pip-button:hover {
+            background-color: #F082AC;
+        }
+        .speed-buttons-container {
+            display: flex;
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <img id="backgroundGif" src="legendtwice.gif" alt="Background GIF">
+    <div class="button-container" id="buttonContainer">
+        <!-- Update the video buttons to call playVideo directly -->
+        <button class="button-1" onclick="playVideo('videos/video1.mp4')">Video 1</button>
+        <button class="button-1" onclick="playVideo('videos/video2.mp4')">Video 2</button>
+        <!-- Add more video buttons as needed -->
+        <button class="button-1" onclick="playVideo('videos/video3.mp4')">Video 3</button>
+        <button class="button-1" onclick="playVideo('videos/video4.mp4')">Video 4</button>
+        <button class="button-1" onclick="playVideo('videos/video5.mp4')">Video 5</button>
+        <button class="button-1" onclick="playVideo('videos/video6.mp4')">Video 6</button>
+        <button class="button-1" onclick="playVideo('videos/video7.mp4')">Video 7</button>
+        <button class="button-1" onclick="playVideo('videos/video8.mp4')">Video 8</button>
+        <button class="button-1" onclick="playVideo('videos/video9.mp4')">Video 9</button>
+        <button class="button-1" onclick="playVideo('videos/video10.mp4')">Video 10</button>
+        <button class="button-1" onclick="playVideo('videos/video11.mp4')">Video 11</button>
+        <button class="button-1" onclick="playVideo('videos/video12.mp4')">Video 12</button>
+    </div>
+    <!-- Create a container for the video screen -->
+    <div class="video-screen" id="videoScreen">
+        <img id="backgroundGif" src="legendtwice.gif" alt="Background GIF">
+        <div class="video-content">
+            <video id="currentVideo" controls></video>
+            <!-- Add a home button in the video screen -->
+        </div>
+    </div>
+    <button class="home-button" id="homeButton" onclick="goHome()">Home</button>
+    <div class="volume-slider-container">
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="1" onchange="adjustVolume()">
+    </div>
+    <div class="play-pause-buttons">
+        <button class="fullscreen-button" id="fullscreenButton" onclick="toggleFullscreen()">Full Screen</button>
+        <button class="pip-button" id="pipButton" onclick="togglePictureInPicture()">Picture in Picture</button>
+    </div>
+    <button class="download-button" id="downloadButton" onclick="downloadVideo()">Download Video</button>
+    <div class="speed-buttons-container">
+        <button class="speed-button" onclick="changeSpeed(0.5)">0.5x</button>
+        <button class="speed-button" onclick="changeSpeed(0.75)">0.75x</button>
+        <button class="speed-button" onclick="changeSpeed(1.0)">Normal</button>
+        <button class="speed-button" onclick="changeSpeed(1.25)">1.25x</button>
+        <button class="speed-button" onclick="changeSpeed(1.5)">1.5x</button>
+        <button class="speed-button" onclick="changeSpeed(2.0)">2x</button>
+    </div>
+
+    <script>
+        let currentVideo = null;
+        let videoSpeed = 1.0;
+
+        function playVideo(videoPath) {
+            if (currentVideo) {
+                currentVideo.pause();
+                currentVideo.style.display = 'none';
+            }
+
+            const videoScreen = document.getElementById('videoScreen');
+            videoScreen.style.display = 'block';
+
+            const videoContent = document.querySelector('.video-content');
+            videoContent.style.display = 'block';
+
+            const video = document.getElementById('currentVideo');
+            video.style.display = 'block';
+            video.src = videoPath;
+            video.play();
+            currentVideo = video;
+
+            const volumeSlider = document.getElementById('volumeSlider');
+            volumeSlider.style.display = 'block';
+
+            const downloadButton = document.getElementById('downloadButton');
+            downloadButton.style.display = 'block';
+
+            const speedButtons = document.querySelectorAll('.speed-button');
+            speedButtons.forEach(button => {
+                button.style.display = 'block';
+            });
+
+            const buttons = document.querySelectorAll('.button-1');
+            buttons.forEach(button => {
+                button.style.display = 'none';
+            });
+
+            const backgroundGif = document.getElementById('backgroundGif');
+            backgroundGif.style.display = 'none';
+        }
+
+        function goHome() {
+            if (currentVideo) {
+                currentVideo.pause();
+                currentVideo.style.display = 'none';
+                currentVideo = null;
+            }
+
+            const videoScreen = document.getElementById('videoScreen');
+            videoScreen.style.display = 'none';
+
+            const videoContent = document.querySelector('.video-content');
+            videoContent.style.display = 'none';
+
+            const volumeSlider = document.getElementById('volumeSlider');
+            volumeSlider.style.display = 'none';
+
+            const downloadButton = document.getElementById('downloadButton');
+            downloadButton.style.display = 'none';
+
+            const speedButtons = document.querySelectorAll('.speed-button');
+            speedButtons.forEach(button => {
+                button.style.display = 'none';
+            });
+
+            const buttons = document.querySelectorAll('.button-1');
+            buttons.forEach(button => {
+                button.style.display = 'block';
+            });
+
+            const backgroundGif = document.getElementById('backgroundGif');
+            backgroundGif.style.display = 'block';
+        }
+
+        function adjustVolume() {
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volume = volumeSlider.value;
+            if (currentVideo) {
+                currentVideo.volume = volume;
+            }
+        }
+
+        function downloadVideo() {
+            if (currentVideo) {
+                const a = document.createElement('a');
+                a.href = currentVideo.src;
+                a.download = 'video.mp4';
+                a.click();
+            }
+        }
+
+        function changeSpeed(speed) {
+            if (currentVideo) {
+                videoSpeed = speed;
+                currentVideo.playbackRate = speed;
+            }
+        }
+
+        function toggleFullscreen() {
+            if (currentVideo) {
+                if (currentVideo.requestFullscreen) {
+                    currentVideo.requestFullscreen();
+                } else if (currentVideo.mozRequestFullScreen) {
+                    currentVideo.mozRequestFullScreen();
+                } else if (currentVideo.webkitRequestFullscreen) {
+                    currentVideo.webkitRequestFullscreen();
+                }
+            }
+        }
+
+        function togglePictureInPicture() {
+            if (currentVideo) {
+                if (currentVideo.requestPictureInPicture) {
+                    currentVideo.requestPictureInPicture();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
